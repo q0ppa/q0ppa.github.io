@@ -44,7 +44,7 @@ bool resolveConflict() {
 }
 ```
 
-<span com>实际上感觉就是带 BFS 的 DP。</span>
+<span com>实际上感觉就是带 DFS 的 DP。</span>
 
 每次我们 `decide()` 的时候，会让 **DL** 即 decision layer 增加一层，并把一个新的 **decision** 入栈。decision 经由 BCP 会产生一系列 **implications**，它们都和这个 decision 处于**同一层**。如果当前的 decision 有误，就需要回溯到最近的没有翻转过的 decision，并翻转它。
 

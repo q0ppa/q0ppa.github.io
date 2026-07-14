@@ -7,6 +7,7 @@ html {
     margin-left: auto;
     margin-right: auto;
     @media (width < 600px) {
+        zoom: 92%;
         padding-left: 0;
         padding-right: 0;
     }
@@ -70,7 +71,7 @@ h1 {
 h2 {
     border-bottom: 1px grey solid;
     font-size: 1.5em;
-    margin-left: -1rem;
+    margin-left: -0.8rem;
     margin-top: 0.7em;
     margin-bottom: 0.5em;
     /* h1 ~ &, &:not(:first-of-type) {
@@ -82,7 +83,7 @@ h3 {
     font-size: 1.3em;
     padding-top: 1.5em;
     margin-top: 0;
-    margin-left: -1rem;
+    margin-left: -0.75rem;
     margin-bottom: 0.4em;
     h1 + &, h2 + &, h3 + &, &:first-child {padding-top: 0;}
 }
