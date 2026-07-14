@@ -3,7 +3,7 @@ body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { m
 
 html {
     max-width: 1440px;
-    min-width: 450px;
+    min-width: 360px;
     margin-left: auto;
     margin-right: auto;
     @media (width < 600px) {
@@ -316,7 +316,7 @@ table td { border: 1px solid #e8e8e8; }
 .post-header { margin-bottom: 30px; }
 
 .post-title { font-size: 42px; letter-spacing: -1px; line-height: 1; }
-@media screen and (max-width: 800px) { .post-title { font-size: 36px; } }
+/* @media screen and (max-width: 800px) { .post-title { font-size: 36px; } } */
 
 .post-content { margin-bottom: 30px; }
 /* .post-content h2 { font-size: 32px; }
