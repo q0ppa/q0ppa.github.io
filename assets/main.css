@@ -70,7 +70,7 @@ h1 {
 h2 {
     border-bottom: 1px grey solid;
     font-size: 1.5em;
-    margin-left: -1.2rem;
+    margin-left: -1rem;
     margin-top: 0.7em;
     margin-bottom: 0.5em;
     /* h1 ~ &, &:not(:first-of-type) {
