@@ -330,7 +330,7 @@ table td { border: 1px solid #e8e8e8; }
 /** Syntax highlighting styles */
 /* .highlight { background: #fff; } */
 .highlight .c { color: #998; font-style: italic; }
-.highlight .err { color: #a61717; background-color: #e3d2d2; }
+/* .highlight .err { color: #a61717; background-color: #e3d2d2; } */
 .highlight .k { font-weight: bold; }
 .highlight .o { font-weight: bold; }
 .highlight .cm { color: #998; font-style: italic; }
