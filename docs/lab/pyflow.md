@@ -188,3 +188,60 @@ BFS loader 做了全传递闭包加载然后疯狂不动点分析。
 
 目前剩下的问题
 - 6个 repo 的数据都不好看，修 ground truth 把它变得好看一些
+
+### 修了一下
+
+TextRank4ZH 和 bpytop 解析失败，剩下的 repo 的 precision 和 recall 还是有点问题。下面的时间数据是在原生 Linux 上跑的。
+
+似乎 TextRank4ZH 和 bpytop 超时还是因为 constraint engine 不动点迭代轮数的问题。另外加了个选项 normalize GT，默认开。开了之后 constraint 的数据好看了一些，PyCG 好看了很多。
+
+这里有一个很搞笑的事情是 PyCG 不支持 Python 3.14，鼓捣了半天）
+
+```
+================================================================================
+                        REPO-LEVEL CALL GRAPH BENCHMARK                         
+================================================================================
+Engine     Project        Precision  Recall  Runtime(ms)
+--------------------------------------------------------------------------------
+constraint cli_tool           0.349   0.822       241.15
+constraint data_pipeline      0.493   0.367       135.47
+constraint furl               0.678   0.369       508.60
+constraint ml_utils           0.468   0.449       122.39
+constraint repo_sample        0.559   0.950        76.28
+constraint rich-cli           0.178   0.533       247.54
+constraint sqlparse           0.257   0.351       555.23
+constraint sshtunnel          0.492   0.598       185.42
+constraint web_framework      0.259   0.300       136.04
+pycg       cli_tool           0.199   0.800       207.84
+pycg       data_pipeline      0.554   0.567       111.57
+pycg       furl               0.022   0.018       289.91
+pycg       ml_utils           0.051   0.061       125.94
+pycg       repo_sample        0.444   0.800        55.71
+pycg       rich-cli           0.128   0.533       128.08
+pycg       sqlparse           0.714   0.319       642.44
+pycg       sshtunnel          0.145   0.696       429.62
+pycg       web_framework      0.471   0.660       139.93
+
+================================================================================
+                              PER-ENGINE AVERAGES                               
+================================================================================
+Engine       Projects  Avg Prec  Avg Rec  Avg RT(ms)
+--------------------------------------------------------------------------------
+constraint          9     0.415    0.527      245.35
+pycg                9     0.303    0.495      236.78
+
+================================================================================
+          DELTAS vs constraint (positive = improvement over baseline)           
+================================================================================
+Project           pycg ΔPrec    ΔRec       ΔRT
+--------------------------------------------------------------------------------
+cli_tool              -0.150  -0.022    -33.30
+data_pipeline         +0.062  +0.200    -23.90
+furl                  -0.655  -0.350   -218.69
+ml_utils              -0.417  -0.388     +3.55
+repo_sample           -0.114  -0.150    -20.56
+rich-cli              -0.050  +0.000   -119.46
+sqlparse              +0.457  -0.032    +87.21
+sshtunnel             -0.346  +0.098   +244.20
+web_framework         +0.213  +0.360     +3.89
+```
