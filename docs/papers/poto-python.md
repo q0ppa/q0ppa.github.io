@@ -92,16 +92,14 @@ PoTo 在生成三地址码时，会对每一个表达式都先尝试进行具体
 
 #### Expression
 
-$\begin{aligned}
-e ::= &c \mid x \mid e.x \mid e[e] \mid e(e, ..., e) \\
-& \mid [e, ..., e] \mid \{e: e, ..., e:e\} \mid (e, ..., e) \\
-& \mid [e\ \mathtt{for}\ x, ..., x\ \mathtt{in}\ e\ \mathtt{if}\ e] \\
-& \mid \{e:e\ \mathtt{for}\ x, ..., x\ \mathtt{in}\ e\ \mathtt{if}\ e\} \\
-& \mid e\ op\ e \mid e\ cop\ e \\
-& \mid Other(e, ..., e)
-\end{aligned}$
+$e ::= c \mid x \mid e.x \mid e[e] \mid e(e, ..., e)$  
+&emsp;$\mid [e, ..., e] \mid \{e: e, ..., e:e\} \mid (e, ..., e)$  
+&emsp;$\mid [e\ \mathtt{for}\ x, ..., x\ \mathtt{in}\ e\ \mathtt{if}\ e]$  
+&emsp;$\mid \{e:e\ \mathtt{for}\ x, ..., x\ \mathtt{in}\ e\ \mathtt{if}\ e\}$  
+&emsp;$\mid e\ op\ e \mid e\ cop\ e$  
+&emsp;$\mid Other(e, ..., e)$
 
-<div com center>
+<div com>
 
 const | Name | Attribute | Subscript | Call  
 | List | Dictionary | Tuple  
@@ -112,15 +110,13 @@ const | Name | Attribute | Subscript | Call
 
 #### Statement
 
-$\begin{aligned}
-s ::=& \mathtt{pass} \mid x=e \mid e.x=e \mid e[e]=e \\
-&\mid s ; s \mid \mathtt{for}\ e\ \mathtt{in}\ e:s \\
-&\mid \mathtt{def}\ f(x, ..., x): s;\ \mathtt{return}\ e \\
-&\mid \mathtt{class}\ C(e, ..., e):s \\
-& \mid Other(s, ..., s)
-\end{aligned}$
+$s ::= \mathtt{pass} \mid x=e \mid e.x=e \mid e[e]=e$  
+&emsp;$\mid s ; s \mid \mathtt{for}\ e\ \mathtt{in}\ e:s$  
+&emsp;$\mid \mathtt{def}\ f(x, ..., x): s;\ \mathtt{return}\ e$  
+&emsp;$\mid \mathtt{class}\ C(e, ..., e):s$  
+&emsp;$\mid Other(s, ..., s)$
 
-<div com center>
+<div com>
 
 Pass | Assign  
 | Suite | For  
@@ -128,13 +124,11 @@ Pass | Assign
 | ClassDef
 </div>
 
-#### Import & Module
+#### Import  Module
 
-$\begin{aligned}
-i ::=& \mathtt{import}\ p\ (\mathtt{as}\ x)? \\
-&\mid \mathtt{from}\ p\ \mathtt{import}\ x\ (\mathtt{as}\ x)? \\
-&\mid i;i
-\end{aligned}$
+$i ::= \mathtt{import}\ p\ (\mathtt{as}\ x)?$  
+$\mid \mathtt{from}\ p\ \mathtt{import}\ x\ (\mathtt{as}\ x)?$  
+$\mid i;i$
 
 $m ::= i ; s$
 
