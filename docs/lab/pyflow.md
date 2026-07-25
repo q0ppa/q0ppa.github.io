@@ -245,3 +245,168 @@ sqlparse              +0.457  -0.032    +87.21
 sshtunnel             -0.346  +0.098   +244.20
 web_framework         +0.213  +0.360     +3.89
 ```
+
+### Diagnostics
+
+读了论文，对于 call graph 要么会产生 named edge 要么会产生 summary，但是尝试了下发现很多边并没有 summary，这是怎么回事？写了一个 diagnosis 来找到它们的原因。
+
+```sh
+python evaluation/diagnose_missing_edges.py
+# -v for per-repo analysis
+# --show [ROOT_CAUSE] -vvv for per-edge analysis
+# （↑ 不指定 root cause 会产生巨量内容瞬间爆掉 console buffer😂
+```
+
+除了分析失败的 bpytop 和 TextRank4ZH，总共有 **873 missing edges**。AI 把 missing edges 分为三大类，包含一系列 root cause，其中 `[fix]` 是比较明确出现在 constraint engine 的问题。
+
+#### `[reach]` UNREACHABLE CALLER
+
+```py
+# data_pipeline/base.py
+class Loggable:
+    def log(self, message, level="INFO"):
+        if self._should_log(level)
+            print(...)
+    def _should_log(self, level):
+        ...
+```
+
+`Loggable.log` 和 `Loggable._should_log` 都被收集了，但是 `Loggable.log` 的 `self` 参数为空，因为没有出现过 `obj = Loggable(); obj.log(...)`。
+
+这里 `log` 实际上是通过多继承分派给各个类的，MRO dispatch 语义是被 PyFlow 支持的。
+
+```py
+class FileSink(Sink[str], Configurable, Loggable):
+```
+
+但是尽管比如 `FileSink.consume()` 里调用了 `self.log()`，但是因为没有人调 `consume`，所以调用链的起点不存在。如果没有任何 caller 传入 `self`，引擎不会主动给 `self` 注入值。这是正确的 demand-driven 设计。
+
+可以不修。
+
+<blockquote info>
+
+如果要解决这个问题，一个 fix 可能会是构建一个人工或合成的 test suite 实例化所有类并逐一调用其方法，另一个则是 GT 只包含 reachable 边，在计算时将 unreachable 的边排除在外。
+</blockquote>
+
+#### `[reach]` EXTERNAL_NOT_AVAILABLE
+
+`furl` 的 `urllib.parse.urlencode`，函数在 project file 里根本不存在。`sqlparse` 也有同一问题。
+
+没必要修。要修的话同上。
+
+#### `[reach]` MODULE_NOT_LOADED
+
+`cli_tool` 似乎整个 `util` 干脆就没被加载。其实是一个 reachability 问题。
+
+没必要修。要修的话同上。
+
+#### `[reach]` EMPTY_SELF_DESPITE_REACHABLE
+
+```py
+# sqlparse/sqlparse/filters/others.py
+class SpacesAroundOperatorsFilter:
+    @staticmethod
+    def _process(tlist):
+        ...
+
+    def process(self, stmt):
+        [self.process(sgroup) for sgroup in stmt.get_sublists()]
+        SpacesAroundOperatorsFilter._process(stmt)
+        return stmt
+```
+
+这条边的 `self` 为空。
+
+研究后可能的原因：fixpoint 对 all scopes 都至少分析一次，即使没有 caller。`process` 在空参数下分析，尽管参数为空，但它调用了 `_process`，产生 incoming edge。我这边看到 incoming edge 非空就判定为 reachable，但实际上它没有被调用过，这还是一个按需的问题。
+
+也就是**假 reachable**，我觉得这个不用解决。要修的话同上。
+
+#### `[reach]` RECEIVER_LOST
+
+`web_framework`：
+
+```py
+# web_framework/middleware/base.py
+class MiddlewareStack:
+    def apply(self, request: Request, final_handler: Any) -> Response:
+        def build_chain(index: int) -> Any:
+            def handler(req: Request) -> Response:
+                result = mw.process_request(req)
+                ...
+```
+
+根因是 apply 无人调用，$\top$ propagated from unreachable enclosing scope。是正常的可达性问题。
+
+要修的话同上。
+
+#### `[fix]` MRO_BROKEN
+
+MRO 在 `_resolve_class_bases()` 的 AST 解析阶段断裂了。
+
+```py
+# data_pipeline/sinks/__init__.py
+class FileSink(Sink[str], Configurable, Loggable):
+    def __init__(...):
+        super().__init__(name=name or f"FileSink({path})")
+```
+
+这里正常来说 `super().__init__` 应该 MRO 解析到 `Sink.__init__`，然后因为 `Sink` 没有 `__init__` 方法，根据继承链找到 `Component`。但是 engine 内部：
+
+```py
+FileSink bases: ['Configurable', 'Loggable']
+FileSink MRO:   [FileSink, Configurable, Loggable]
+```
+
+<blockquote info>
+
+带 subscript 的 class `Sink[str]` 被错误解析后丢弃了？
+</blockquote>
+
+#### `[fix]` ATTR_LOOKUP_FAILED
+
+最神秘的一个。`furl` 有两条很特殊的边。
+
+```py
+# furl/furl/furl.py
+class Path(object): # ← 只继承 object
+    def __init__(self, force_absolute): # force_absolute 是参数
+        self._force_absolute = force_absolute  # 存到 instance field
+    def load(self):
+        self._force_absolute(self) # ← 调 instance field 里的 callable   
+```
+
+`self._force_absolute(self)` 是通过 instance field 存储的 callable，constraint 认为这个就是父类版本（因为 `self._force_absolute` 被赋的那个值就是从父类继承来的定义），我觉得这也没啥问题。然而 GT 要求继承 `Path` 的子类的版本 `URLPathCompositionInterface._force_absolute` 和 `FragmentPathCompositionInterface._force_absolute`，而不是它们的来源 `PathCompositionInterface._force_absolute`。
+
+我觉得我研究这个浪费了很多时间。但是考虑到 ATTR_LOOKUP_FAILED 不一定是一个不会因为其他原因出现的 root cause，我决定将其保留为 `[fix]`，不过这两条 specific edges 就没什么管的必要了。
+
+#### `[fix]` BUILTIN_PROTOCOL_GAP
+
+`sqlparse.sql.TokenList.group_tokens` 调用了 `sqlparse.sql.TokenList.__str__`。这里具体来说是 
+
+```py
+grp.value = str(start)
+```
+
+这一行调用了 `str` 方法，且在输入中传入了自己。**PyFlow 不知道 `str()` 会隐式调用 `__str__()`**。
+
+#### `[fix]` RECURSIVE_UNRESOLVED
+
+```py
+def _group(...):
+    tidx_offset = 0
+    pidx, prev_ = None, None
+    for idx, token in enumerate(list(tlist)):
+        ...
+        if recurse and token.is_group and not isinstance(token, cls):
+            _group(token, cls, match, valid_prev, valid_next, post, extend)
+```
+
+递归调用解析失败，似乎是 `_group` 被放进了 `closure_vars`，所以没有进行 `module_bindings`？
+
+#### `[name]` NAMING_MISMATCH
+
+找有没有前缀不同的同名 scope 来定位这个问题。
+
+`sshtunnel` 没有 package 上下文导致直接被注册为 module `main`。
+
+改的话可以改 GT，也可以改 normalization。
