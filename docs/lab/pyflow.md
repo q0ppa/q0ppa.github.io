@@ -410,3 +410,147 @@ def _group(...):
 `sshtunnel` 没有 package 上下文导致直接被注册为 module `main`。
 
 改的话可以改 GT，也可以改 normalization。
+
+### 根据 diag 修复
+
+之前发现 naming 和 edges 的问题是导致 repo-level recall 和 precision 不高的元凶。那么，能否只对 eval 进行修改来解决问题呢？
+- 对于 naming issues，有 normalize，修 ground truth，修 repo 三个方案；
+- 对于 reach 问题，有 demand-driven compare（参考 ***PoTo*** 的 Evaluation），手写 test，以及自动合成 test 三个方案。
+
+#### 先放数据
+
+原数据和现数据对比。
+
+```
+=====================================================
+Engine  Projects  Avg Prec  Avg Rec  Avg RT(ms)
+-----------------------------------------------------
+constraint     9     0.415    0.527      245.35
+pycg           9     0.303    0.495      236.78
+----------------------------------------------------
+constraint     9     0.420    0.710      188.00
+pycg           9     0.307    0.582      221.56
+```
+
+现在的 recall 缺少什么：
+
+```ini
+275 missing edges across 9 projects
+[reach] UNREACHABLE_CALLER            178 ( 64.7%)
+[fix]   MRO_BROKEN                     32 ( 11.6%)
+[name]  NAMING_MISMATCH                20 (  7.3%)
+[reach] RECEIVER_LOST                  17 (  6.2%)
+[reach] EMPTY_SELF_DESPITE_REACHABLE   17 (  6.2%)
+[reach] EXTERNAL_NOT_AVAILABLE          4 (  1.5%)
+[fix]   RECURSIVE_UNRESOLVED            3 (  1.1%)
+[fix]   ATTR_LOOKUP_FAILED              2 (  0.7%)
+[fix]   BUILTIN_PROTOCOL_GAP            2 (  0.7%)
+
+[fix]=39  [name]=20  [reach]=216
+```
+
+#### `[name]` edges
+
+我的想法是，能 normalization 解决的比较简单的 naming issues，最好 normalization 解决。normalization 的工作包括：
+- strip `<` 开头的边，不 strip 的话 recall 会稍微上升，但是 precision 非常难看。我猜想 **builtins 的调用一般不太会是 call graph 分析的目标**（应该不会吧？）。
+- 扩展 `BUILTIN_PREFIXES`，**识别外部库**，让第三方函数不会被错误地加上当前的顶层模块名。
+- PyFlow 倾向于把入口作为 `main`，需要处理模块名称如 `main.parse` → `sqlparse.parse`，以免后续模块名修正产生 `sqlparse.main.parse` 这种不存在的名字。
+- `rich-cli` 这个 repo 因为 Python 导入不允许 hyphen 所以叫 `rich_cli`。
+
+#### `[reach]` edges
+
+reach 问题用 DDA + synth test。
+- **DDA**：类似 PoTo，比较被 PyFlow 覆盖的函数的 recall 和 precision。
+  - suppress 只产出 `<` 边的 caller。这样听起来好像 DDA 等于没做，毕竟 diag 为了对齐本来就是要 normalize 的，而 normalize 就会 strip 这些边，但实际上还真不一样。<span com>如果一个函数在 PyFlow 分析下发现只产出 `<`，那么 DDA 认为这个函数没有被分析过，直接将其 strip 掉，但可能在 GT 里它是被期望的。DDA 做的就是**额外从 GT 里也 strip 掉这条边**，从而提高了 recall。</span>
+  - **需要额外显示一下 constraint 的 coverage**，这是一个比较有用的指标。具体来说的话，就是 GT 在 DDA 之后与原图的大小对比。
+- synth test 的话，我考虑的比较复杂，需要单独讲一讲。
+
+理论上所有 `[reach]` 问题都可以被排除，这种情况下就是最 strict 的 DDA，可以达到惊天 **0.89 recall**（这个数据是我根据 diagnosis 计算出来的，没有真实跑过），除了 data pipeline 依旧拉胯，大部分 recall 基本可以来到 0.9 或更高。
+
+```sh
+python evaluation/bench_repo_sdda.py
+
+Engine    Projects  Avg Prec  Avg Rec  Avg Cov  Avg RT(ms)
+----------------------------------------------------------
+constraint-sdda  9     0.420    0.902    0.263      193.83
+```
+
+不行，我还是忍不住实现了，效果比我想得还夸张，<span bus>**0.902 recall**</span> 是人类啊。不过 precision 没变化（很正常，因为 **DDA → SDDA 只动了 GT，predicted 里的正确率是不变的**），另外 coverage 从 38% 降到 26% 了。
+
+#### Synth test
+
+需求大致是：
+- 改动对 bench 和 diag 以外的 codebase 尽可能最小；
+- 可以创建也可以妥善 clean up；
+- 大概率要修改 manifest，备份原先的 manifest，clean up 时恢复；
+- 可能找到一个影响最小的方式，固定命名和摆放的位置，但不会影响原 repo（也就是说，添加一个额外的常规入口文件是不行的，添加 test suite 也可能不是非常行）。
+
+```sh
+python evaluation/synth_bench_entry.py # -- clean
+```
+
+我的目的是消除掉不可达边，让 recall 变得非常高。然而，`try/except` 调用因为缺乏合规的参数，容易导致构造失败，类型丢失，抹平了优势，recall 和原来持平。纯 `import` 没有函数调用入口，不会启动过程间分析。
+
+一个思路是空子类绕过构造函数……
+
+```py
+class _SynthConfig(Config):
+    def __init__(self): pass   # 跳过原始 __init__
+
+_s = _SynthConfig()            # self 有类型了！
+_s.save()                      # PyFlow 能 dispatch 到 Config.save
+```
+
+PyFlow 是静态分析，不执行代码，所以 MRO 遍历能找到所有方法。PyCG 似乎也不会受到什么负面影响
+
+`rich-cli` 这个项目的 recall 和 prec 比较炸裂，在 constarint 是 0.042 prec 0.200 recall，在 PyCG 是惊天0条边（但是 recall 因此变为异常值1）。我尝试修了下，但是有模块命名、GT 不一致等很多难以解决的顽固问题。我考虑直接摆烂。最新的 fix 里 coverage 勉强达到 3.3%，基本就没被分析到。
+
+疑似 `rich_cli/main.py` 开头就 `import click`，而 `click` 没装导致了问题。当 PyFlow 把 `main.py` 作为 entry 直接分析时能容错，但通过 synth `import` 时分析深度不够。🤔
+
+原始 entry 和合成 entry 的效果分别如下。
+
+```
+constraint     9     0.420    0.710      188.00
+pycg           9     0.307    0.582      221.56
+-----------------------------------------------
+constraint     9     0.293    0.697      420.62
+pycg           9     0.184    0.634      393.07
+```
+
+若排除异常的 `rich-cli` 则可以发现 recall 数据相当美丽，尤其 0.759 感觉是相当可观的一个数据了。原始 entry 和合成 entry 的效果分别如下。
+
+```
+constraint     8     0.450    0.722      199.15
+pycg           8     0.329    0.576      236.49
+-----------------------------------------------
+constraint     8     0.321    0.759      472.27
+pycg           8     0.207    0.588      436.52
+```
+
+### 小结：目前的 repo-level bench 怎么用
+
+<blockquote info>
+
+目前还是没有修好 `rich-cli`，`bpytop` 和 `TextRank4ZH`，后两个可能要改迭代次数……之类的……`rich-cli` 先放着问题应该也不大，我觉得算是某种 infra 问题，可以证明 synth 方法的局限性，不是必须排除的项。
+</blockquote>
+
+```sh
+# 生成和清理 synthetic entries，这些会作为当前 corpus 的新入口
+  python evaluation/synth_bench_entry.py
+  python evaluation/synth_bench_entry.py --clean
+
+# 查看 bench repo stats (默认 DDA，可选 WPA）
+  python evaluation/bench_repo_callgraph.py
+  python evaluation/bench_repo_callgraph.py --whole-program
+# 查看 strict DDA stats（使用 diag 去掉所有 unreachable）
+# 不支持 diagnose，但是其实也没啥必要，就是 DDA 去掉 [reach]
+  python evaluation/bench_repo_sdda.py
+
+# diag. missing edges，查看是什么导致了 recall 小于1
+  python evaluation/diagnose_missing_edges.py
+  python evaluation/diagnose_missing_edges.py --whole-program
+# verbose 参数可以查看 per-repo 甚至 per-edge 结果，
+# 多于一个 v 的话建议指定 --project 和 --show 参数！
+  python evaluation/diagnose_missing_edges.py -v
+  python evaluation/diagnose_missing_edges.py -vv # ...
+```

@@ -12,5 +12,6 @@ layout: home
 ### Recent Activities
 
 - [**Pyflow**](docs/lab/pyflow.md)
-  - [不知道 fragment link 会不会工作](docs/lab/pyflow.md#diagnostics)
+  - [最新进度，不知道能不能跳转](docs/lab/pyflow.md#根据-diag-修复)
+  - [repo-bench 怎么用？](docs/lab/pyflow.md#小结目前的-repo-level-bench-怎么用)
 - [**Paper reading**](docs/papers.md)
