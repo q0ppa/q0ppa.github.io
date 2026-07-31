@@ -9,9 +9,9 @@
   
 原因未知，疑似 Linux 平台限定 bug，网上也没什么人讨论。
 
-什么叫正常工作呢？就是：editor 状态下，我 Ctrl + Click `[](...)` 里的 link（即 `...` 指代的东西），可以打开一个 editor 页面跳转到对应文档的对应节，这个行为是一直都能成功的；preview 当中，我直接点击这个显示的链接（实际上可能被 preview 渲染为一个网页元素？），可以在 preview 中打开该文档（目前确实都可以做到这一点），并跳转到对应节（目前不总是能，见上）。
+正常来说在 editor 状态下，我 Ctrl + Click `[](...)` 里的 link（即 `...` 指代的东西），得可以打开一个 editor 页面；fragment link 就是指 `[](doc.md#section-header)` 这样的链接格式，点击后则跳转到对应文档 `doc.md` 的对应节；在 preview 当中，我直接点击这个显示的链接（实际上可能被 preview 渲染为一个网页元素？），则可以在 preview 中打开该文档，并跳转到对应节。
 
-也就是说，实际上是 **navigation**，而且是 preview 在文档内的 navigation 出了问题。
+然而最后一个行为并不总是能成功。也就是说，实际上是 **navigation**，而且是 preview 在文档内的 navigation 出了问题。
 
 ### 定位到了问题！
 
