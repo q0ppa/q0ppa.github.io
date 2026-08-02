@@ -18,3 +18,7 @@
 - [**DPLL (1962)**](papers/dpll.md)
   > A Machine Program for Theorem-Proving
 
+### Misc
+
+- [**Dayal ECA (OODBS 1988)**](papers/dayal-eca.md)
+  > Rules are objects too: a knowledge model for an active, object-oriented database system
