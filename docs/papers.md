@@ -22,3 +22,5 @@
 
 - [**Dayal ECA (OODBS 1988)**](papers/dayal-eca.md)
   > Rules are objects too: a knowledge model for an active, object-oriented database system
+- [**Rete (2003)**](papers/rete.md)
+  > Rete: A fast algorithm for the many pattern/many object pattern match problem
