@@ -2,7 +2,7 @@
 layout: home
 ---
 
-<blockquote info>
+<div info>
 
 主页最近更新：2026-10-07
 </blockquote>

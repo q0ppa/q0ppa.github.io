@@ -283,7 +283,7 @@ class FileSink(Sink[str], Configurable, Loggable):
 
 可以不修。
 
-<blockquote info>
+<div info>
 
 如果要解决这个问题，一个 fix 可能会是构建一个人工或合成的 test suite 实例化所有类并逐一调用其方法，另一个则是 GT 只包含 reachable 边，在计算时将 unreachable 的边排除在外。
 </blockquote>
@@ -357,7 +357,7 @@ FileSink bases: ['Configurable', 'Loggable']
 FileSink MRO:   [FileSink, Configurable, Loggable]
 ```
 
-<blockquote info>
+<div info>
 
 带 subscript 的 class `Sink[str]` 被错误解析后丢弃了？
 </blockquote>
@@ -529,7 +529,7 @@ pycg           8     0.207    0.588      436.52
 
 ### 小结：目前的 repo-level bench 怎么用
 
-<blockquote info>
+<div info>
 
 目前还是没有修好 `rich-cli`，`bpytop` 和 `TextRank4ZH`，后两个可能要改迭代次数……之类的……`rich-cli` 先放着问题应该也不大，我觉得算是某种 infra 问题，可以证明 synth 方法的局限性，不是必须排除的项。
 </blockquote>

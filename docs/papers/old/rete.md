@@ -97,7 +97,7 @@ Rete 使用一个树形的 sorting network 来避免遍历每个 production。
 
 NOT pattern 表示**整个 WM 中不存在任何节点满足条件**。基础的 2-input node 无法处理这个逻辑，因此需要一种新的 2-input 来处理 NOT。
 
-<blockquote box>
+<div box>
 
 - 假设 production 的条件为 $A\ \mathrm{AND\ NOT}\ B$，那么整个 WM 中不能有任何 $B$ 满足条件。
 - WM 中有一系列 candidate $A$。对于 $\mathrm{NOT}\ B$，直接找到所有能匹配 B 的节点 candidate $B$。
@@ -134,7 +134,7 @@ WM 中的元素需要易于取值和测试。
 
 ## Understanding Rete
 
-<blockquote info>
+<div info>
 
 我认为 Rete 充满对当今实践来说不必要的 trivial details（如对汇编的具体翻译方式），所以考虑从更高层概括地梳理一下 Rete。
 </blockquote>

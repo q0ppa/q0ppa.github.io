@@ -5,7 +5,7 @@
 
 SAT 是一个被充分研究的经典问题，EDA（电子设计自动化）中的自动测试生成、逻辑综合，以及 AI 领域的自动定理证明，都依赖于高性能的 SAT 求解器。主流的 complete solvers 都是基于 **Davis-Putnam (DP) 算法**，Chaff 则通过 **careful engineering**，得到了一到两个数量级的性能提升。
 
-<blockquote info>
+<div info>
 
 这里提到的 publicly available SAT solvers 包括：GRASP，POSIT，SATO，rel_sat 和 WalkSAT。WalkSAT 进行的是启发式局部搜索，但本文主要关注完全、系统的 DP-based 搜索方法。
 
@@ -56,7 +56,7 @@ bool resolveConflict() {
 
 Recall BCP 的过程：
 
-<blockquote box>
+<div box>
 
 每次 BCP 会**消除成立的 clause**（如当前 unit 为 $(x)$ 的话，就是任何包含 unit $x$ 的 clause），从其他 clause 并**去掉不成立的 literal**（$\neg x$）。当一个 clause 为空时，说明**其所有 literal 均为假，CNF 是 UNSAT 的**。
 </blockquote>

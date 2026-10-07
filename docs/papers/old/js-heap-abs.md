@@ -69,7 +69,7 @@ webidl.converters.RequestInit = webidl.dictionaryConverter([
 
 为了聚焦核心，此处定义一个只包含对象分配、函数定义、赋值、返回、属性读写、函数调用等关键操作的轻量 JavaScript。因为本文处理的指针分析是 Flow-Insensitive 的，所以可以省略控制流结构。
 
-<blockquote info>
+<div info>
 
 这是为了讲解的方便，后面评估时支持的是完整的 JS。
 </blockquote>
@@ -102,7 +102,7 @@ webidl.converters.RequestInit = webidl.dictionaryConverter([
 
 合并对象时，必须逐属性 (field) 合并，以保证分析的一致性。算法维护两个状态：$A$ 存放待合并变量，$B$ 存放执行过合并的变量防止重复处理。
 
-<blockquote info>
+<div info>
 
 如果反复合并，每次都要重新计算和分组，而随着分析的进行，很多对象已经被合并过，新加入的对象很容易分组失败，白白浪费计算资源。
 </blockquote>
@@ -138,7 +138,7 @@ $$\mathit{Sig}(t) = \lang \mathit{kind, module, name, params, prop} \rang$$
 
 ## Evaluation
 
-<blockquote info>
+<div info>
 
 An artifact containing the implementation
 and all experimental data is available at https://zenodo.org/records/19554781.

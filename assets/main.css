@@ -186,28 +186,29 @@ blockquote {
         color: var(--color_current);
         border-left: grey 3px solid;
     }
-    &[info] {
-        --color_current: black;
+}
+
+div[info] {
+    --color_current: black;
+    color: var(--color_current);
+    .vscode-dark & {
+        --color_current: lightgrey;
         color: var(--color_current);
-        .vscode-dark & {
-            --color_current: lightgrey;
-            color: var(--color_current);
-        }
-        border-left: var(--color_blue) 3px solid;
-        background-color: color-mix(in srgb, var(--color_blue) 15%, transparent);
-        .vscode-dark & {
-            background-color: color-mix(in srgb, var(--color_blue) 30%, transparent);
-        }
-        padding: 0.5em 0.5em 0.4em 0.5em;
-        margin-bottom: 0.7em;
-        code:not(pre >) {
-            --color_current: var(--code_infogold);
-            color: var(--color_current);
-        }
+    }
+    border-left: var(--color_blue) 3px solid;
+    background-color: color-mix(in srgb, var(--color_blue) 15%, transparent);
+    .vscode-dark & {
+        background-color: color-mix(in srgb, var(--color_blue) 30%, transparent);
+    }
+    padding: 0.5em 0.5em 0.4em 0.5em;
+    margin-bottom: 0.7em;
+    code:not(pre >) {
+        --color_current: var(--code_infogold);
+        color: var(--color_current);
     }
 }
 
-blockquote[box] {
+div[box] {
     display: block;
     --color_current: var(--htmlFG);
     color: var(--color_current);

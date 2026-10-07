@@ -11,12 +11,12 @@ GPU 作为 SIMT 架构，天然适用于操作密集的数组和矩阵，而对�
 
 ### Prior Work
 
-<blockquote bg box>
+<div bg box>
 
 Harish et al. [14] pioneered this field with their CUDA implementations of algorithms such as breadth-first search and single source shortest paths. BFS has recently received much attention in the GPU community [19, 24, 26]. Barnat et al. [5] implemented a GPU algorithm for finding strongly-connected components in directed graphs and showed that it achieves significant speedup with respect to Tarjan's sequential algorithm. Other irregular algorithms that have been successfully parallelized using GPUs are n-body simulations and some dataflow analyses [9, 30].
 </blockquote>
 
-<blockquote bg box>
+<div bg box>
 
 [...] The closest work to this paper is the GPU implementation of a 0-CFA analysis by Prabhu et al [30]. [...] Our work improves on their solution in several ways: [...]
 </blockquote>
@@ -47,7 +47,7 @@ Andersen 分为三步：
   - **Store** &emsp; $x \overset p \to z \land x \overset s \to y \Rightarrow y \overset c \to z$
   - **AddPtr** &emsp; $y \overset p \to z \land y \overset {a,o} \to x \Rightarrow x \overset p \to z + o$
 
-<blockquote info>
+<div info>
 
 `x = y + o` 实质上是 `x = &y[o]` **指针算数**，**不是 field-sensitive**！
 </blockquote>
