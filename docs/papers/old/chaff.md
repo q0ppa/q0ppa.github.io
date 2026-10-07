@@ -10,7 +10,7 @@ SAT 是一个被充分研究的经典问题，EDA（电子设计自动化）中�
 这里提到的 publicly available SAT solvers 包括：GRASP，POSIT，SATO，rel_sat 和 WalkSAT。WalkSAT 进行的是启发式局部搜索，但本文主要关注完全、系统的 DP-based 搜索方法。
 
 关于本论文的 impl，可以看看 [**MiniSAT**](https://github.com/niklasso/minisat)。
-</blockquote>
+</div>
 
 <div com>
 
@@ -59,7 +59,7 @@ Recall BCP 的过程：
 <div box>
 
 每次 BCP 会**消除成立的 clause**（如当前 unit 为 $(x)$ 的话，就是任何包含 unit $x$ 的 clause），从其他 clause 并**去掉不成立的 literal**（$\neg x$）。当一个 clause 为空时，说明**其所有 literal 均为假，CNF 是 UNSAT 的**。
-</blockquote>
+</div>
 
 如果一个 clause 除了一个 literal 之外，所有的 literal 都被赋值为0，就产生了一个 **implication**，或者说 the clause is **implied**。进行 BCP 时，一个很重要的过程是找到 **newly implied clause**，并且由于需要**频繁更新和回溯**，希望这两个过程都尽可能高效。
 

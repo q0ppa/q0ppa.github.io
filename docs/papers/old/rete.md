@@ -40,19 +40,15 @@ OPS5 interpreter 需要循环下列三步。
 
 **Element** 实际上就是一个字典，有一个名称和一些键值对，填充了 field name 和对应的具体值。
 
-$$(\mathrm{Name}\ \uparrow attr_1\ \mathrm{value_1}\  \dots)$$
+- $(\mathrm{Name}\ \uparrow attr_1\ \mathrm{value_1}\  \dots)$
 
 **Pattern** 的模板同 element，但 pattern 的 value 可以是具体值也可以是变量，变量用 $\lang \rang$ 括起。变量在首次被匹配时会被赋值，**同一 production 的其他同一变量必须匹配同一个值**。
 
-$$(\mathrm{Same} \uparrow arg_1\ \lang X\rang\ \uparrow arg_2 \lang X\rang)$$
+- $(\mathrm{Same} \uparrow arg_1\ \lang X\rang\ \uparrow arg_2 \lang X\rang)$
 
 **Production** 的模板为 $(\mathrm{P\ Name}\ \{\mathrm{(LHS), \dots}\} \longrightarrow (\mathrm{RHS}))$，如
 
-$$(\mathrm{P\ symplify}\\
-(\mathrm{Goal}\ \uparrow Type\ \mathrm{Simplify}\ \uparrow Obj\ \lang X\rang)\\
-(\mathrm{Expr}\ \uparrow Name\ \lang X\rang\ \uparrow Arg_1\ 0)\\
-\longrightarrow (\mathrm{MODIFY}\ 2\ \uparrow Arg_1\ \mathrm{NIL})
-$$
+- $(\mathrm{P\ symplify} \\ (\mathrm{Goal}\ \uparrow Type\ \mathrm{Simplify}\ \uparrow Obj\ \lang X\rang) \\ (\mathrm{Expr}\ \uparrow Name\ \lang X\rang\ \uparrow Arg_1\ 0) \\ \longrightarrow (\mathrm{MODIFY}\ 2\ \uparrow Arg_1\ \mathrm{NIL})$
 
 
 
@@ -62,7 +58,7 @@ $$
 
 Rete 匹配器的输出不是满足 production 的集合，而是一个 **conflict set**，a collection of **ordered pairs**
 
-$$\lang \mathrm{Collection}, \text{list of matched elems}\rang$$
+$\lang \mathrm{Collection}, \text{list of matched elems}\rang$
 
 这个列表是有序的，每一对称为一个**实例化 (instantiation)**。一个 production 可以有多个实例化，例如 LHS 的每个模式匹配多个元素时组合数会很大。Rete 可以处理这个量级的数据，因为 ***it does not iterate over the sets***。
 
@@ -102,7 +98,7 @@ NOT pattern 表示**整个 WM 中不存在任何节点满足条件**。基础的
 - 假设 production 的条件为 $A\ \mathrm{AND\ NOT}\ B$，那么整个 WM 中不能有任何 $B$ 满足条件。
 - WM 中有一系列 candidate $A$。对于 $\mathrm{NOT}\ B$，直接找到所有能匹配 B 的节点 candidate $B$。
 - 对于每一个 candidate $A_i$，维护一个 **counter**，即能和这个 $A_i$ 匹配的 candidate $B$ 的数量。若 counter 非零则不通过，为零则放行，得到一系列实例 $(A_i, B_1), \dots, (A_i, B_n)$。
-</blockquote>
+</div>
 
 ### Representing Network and Tokens
 
@@ -137,7 +133,7 @@ WM 中的元素需要易于取值和测试。
 <div info>
 
 我认为 Rete 充满对当今实践来说不必要的 trivial details（如对汇编的具体翻译方式），所以考虑从更高层概括地梳理一下 Rete。
-</blockquote>
+</div>
 
 ### Nodes
 

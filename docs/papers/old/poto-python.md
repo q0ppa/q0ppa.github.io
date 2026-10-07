@@ -234,7 +234,7 @@ while W ≠ ∅
 <div info>
 
 这里每次遇到 `len` 的调用点，PoTo 都会创建新的实例。这会造成一些冗余，不过优化这一点非常简单。
-</blockquote>
+</div>
 
 对于复杂表达式如 `a.b()`，PoTo 优先尝试在 $\Gamma_{ext}$ 具体求值，例如 `np.array(arg)`。这里因为 `arg` 是抽象变量所以会失败，此时会再次尝试子表达式，成功得到 `numpy.array` 这个具体的函数对象，最后退回抽象解释流程生成三地址码：函数对象 `t2 → numpy.array` 调用抽象参数 `t3 → arg`。
 

@@ -72,7 +72,7 @@ webidl.converters.RequestInit = webidl.dictionaryConverter([
 <div info>
 
 这是为了讲解的方便，后面评估时支持的是完整的 JS。
-</blockquote>
+</div>
 
 对于其支持的操作，可以列出分析表如下：
 
@@ -105,7 +105,7 @@ webidl.converters.RequestInit = webidl.dictionaryConverter([
 <div info>
 
 如果反复合并，每次都要重新计算和分组，而随着分析的进行，很多对象已经被合并过，新加入的对象很容易分组失败，白白浪费计算资源。
-</blockquote>
+</div>
 
 此外需要一个 $\mathrm{Rep}(x)$：若 `o2` 被合并到 `o1`，那么 `Rep(o2)` 返回 `o1`，也就是经典的 **representative mapping**。
 
@@ -142,7 +142,7 @@ $$\mathit{Sig}(t) = \lang \mathit{kind, module, name, params, prop} \rang$$
 
 An artifact containing the implementation
 and all experimental data is available at https://zenodo.org/records/19554781.
-</blockquote>
+</div>
 
 本算法在 **Jelly** 这一 SOTA JS 分析框架上实现。很多其他 JS 分析工具，如 ODGen、FAST、Graph.js，由于其忽略了很多 JS 语言特性而使得其分析变得 **unsound**，因此评估过程没有使用它们。
 
