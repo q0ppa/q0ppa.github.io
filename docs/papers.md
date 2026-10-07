@@ -1,11 +1,18 @@
 # Papers
 
-## New
+### sym
 
-- [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./papers/ai-ptx-compiler.md)
-  > 借助传统验证器，采样 LLM output，验证、跑分并送入 feedback loop
+- [**RETE** (2003) [Charles L. Forgy]](./papers/rete.md)
+  > **增量**而不是全量计算元素对规则匹配的变化
+- [**CORGI** (2025) [Daniel Weitekamp]](./papers/corgi.md)
+  > 对每个二元关系存储**匹配矩阵**，$N^2$ 时空复杂度
+
+### AI
+
 - [**JAZ Harness as Language** (2026) [Li *et al.*]](./papers/jaz-harness-lang.md)
   > 用一个 invoke 原语实现对 LLM 外部系统的极简等效替代
+- [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./papers/ai-ptx-compiler.md)
+  > 借助传统验证器，采样 LLM output，验证、跑分并送入 feedback loop
 
 ## Archived
 

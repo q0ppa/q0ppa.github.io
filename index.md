@@ -13,9 +13,16 @@ layout: home
 
 #### 2026-10
 
-- 阅读：
-  - [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./docs/papers/ai-ptx-compiler.md)
+- 阅读
+  - [**RETE** (2003) [Charles L. Forgy]](./docs/papers/rete.md)
+  - [**CORGI** (2025) [Daniel Weitekamp]](./docs/papers/corgi.md)
   - [**JAZ Harness as Language** (2026) [Li *et al.*]](./docs/papers/jaz-harness-lang.md)
+  - [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./docs/papers/ai-ptx-compiler.md)
+
+#### 2026-09
+
+- [**Katexdown**](https://github.com/q0ppa/katexdown)，Kate 的 Markdown preview 插件
+  - ~~mac支持烂完了~~
 
 #### 2026-07 / 08
 
