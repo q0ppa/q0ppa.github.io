@@ -4,7 +4,7 @@ layout: home
 
 <div info>
 
-主页最近更新：2026-10-07
+主页最近更新：2026-10-19
 </div>
 
 用 Jekyll 开发的 Pages，欢迎监工
@@ -18,6 +18,7 @@ layout: home
   - [**CORGI** (2025) [Daniel Weitekamp]](./docs/papers/corgi.md)
   - [**JAZ Harness as Language** (2026) [Li *et al.*]](./docs/papers/jaz-harness-lang.md)
   - [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./docs/papers/ai-ptx-compiler.md)
+- PyFlow eval WiP...
 
 #### 2026-09
 
