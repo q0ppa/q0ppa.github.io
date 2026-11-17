@@ -1,0 +1,90 @@
+name: Cleanup Old GitHub Pages Deployments
+
+on:
+  schedule:
+    # Every Sunday at 03:00 UTC
+    - cron: "0 3 * * 0"
+
+  workflow_dispatch:
+
+permissions:
+  deployments: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cleanup old deployments
+        uses: actions/github-script@v7
+
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          script: |
+            const KEEP = 10;
+            const DRY_RUN = false;
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Get all deployments
+            const deployments = await github.paginate(
+              github.rest.repos.listDeployments,
+              {
+                owner,
+                repo,
+                per_page: 100
+              }
+            );
+
+            // Only handle GitHub Pages deployments
+            const pages = deployments
+              .filter(d => d.environment === "github-pages")
+              .sort((a, b) =>
+                new Date(b.created_at) - new Date(a.created_at)
+              );
+
+            console.log(`Found ${pages.length} Pages deployments`);
+
+            // Keep the newest 10 deployments
+            const candidates = pages.slice(KEEP);
+
+            for (const deployment of candidates) {
+
+              // Get the latest status
+              const response =
+                await github.rest.repos.listDeploymentStatuses({
+                  owner,
+                  repo,
+                  deployment_id: deployment.id,
+                  per_page: 1
+                });
+
+              const latest = response.data[0];
+
+              // Never delete deployments without a known inactive status
+              if (!latest || latest.state !== "inactive") {
+                console.log(
+                  `SKIP ${deployment.id}: ${latest?.state || "no status"}`
+                );
+                continue;
+              }
+
+              if (DRY_RUN) {
+                console.log(
+                  `[DRY RUN] Would delete deployment ${deployment.id}`
+                );
+                continue;
+              }
+
+              await github.rest.repos.deleteDeployment({
+                owner,
+                repo,
+                deployment_id: deployment.id
+              });
+
+              console.log(`Deleted deployment ${deployment.id}`);
+            }
+
+            console.log("Cleanup completed.");
