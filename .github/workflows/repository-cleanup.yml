@@ -30,7 +30,7 @@ jobs:
             // CONFIGURATION
             // =========================================
 
-            const DRY_RUN = true;
+            const DRY_RUN = false;
 
             const PAGES_ENV = "github-pages";
             const PAGES_PATH =
