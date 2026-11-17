@@ -16,7 +16,7 @@ layout: home
 - 阅读
   - [**Towards Safe LLM Agents** (2026) [Dantas *et al.*]](./docs/papers/safe-llm-2026.md)
   - [**Python SALT** (2026) [Oh et al.]](./docs/papers/python-salt.md)
-- PyFlow eval SC WiP.
+- [**Py Supply Chain Eval** WiP.](./docs/lab/py-eval-sc.md)
 
 #### 2026-10
 
@@ -25,7 +25,7 @@ layout: home
   - [**CORGI** (2025) [Daniel Weitekamp]](./docs/papers/corgi.md)
   - [**JAZ Harness as Language** (2026) [Li *et al.*]](./docs/papers/jaz-harness-lang.md)
   - [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./docs/papers/ai-ptx-compiler.md)
-- [PyFlow eval WiP...](./docs/lab/pyflow-eval.md)
+- [PyFlow eval](./docs/lab/pyflow-eval.md)
 
 #### 2026-09
 
