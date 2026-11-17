@@ -193,15 +193,14 @@ pre {
     border-radius: 5px;
     background: #f6f7f9;
     overflow-x: auto;
-    overflow-y: hidden;
-    max-width: 100%;
-    white-space: pre;
 }
 
 pre code {
     padding: 0;
-    border: none;
     background: transparent;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 /* Rouge / Jekyll syntax highlighting */
