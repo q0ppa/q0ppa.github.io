@@ -187,10 +187,21 @@ code:not(pre code) {
 
 /* Code blocks */
 pre {
-    max-width: 100%;
+    padding: 0.65em 0.9em;
+    margin: 0.8em 0;
+    border: 1px solid #d8dce2;
+    border-radius: 5px;
+    background: #f6f7f9;
     overflow-x: auto;
     overflow-y: hidden;
+    max-width: 100%;
     white-space: pre;
+}
+
+pre code {
+    padding: 0;
+    border: none;
+    background: transparent;
 }
 
 /* Rouge / Jekyll syntax highlighting */
