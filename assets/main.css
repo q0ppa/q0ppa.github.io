@@ -178,23 +178,40 @@ ul {
     }
 }
 
+/* Inline code */
+code:not(pre code) {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+/* Code blocks */
+pre {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: pre;
+}
+
+/* Rouge / Jekyll syntax highlighting */
 div.highlight {
-    background-color: #cccccc30;
-    border-radius: 3px;
-    code {
-        white-space: pre-wrap;
-        word-break: break-word;
-        overflow-wrap: anywhere;
-        overflow-wrap: break-word;
-        overflow: visible;
-    }
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: normal;
     padding: 0.2em 0.4em;
-    /* margin-bottom: 0.3em; */
-    page-break-inside: auto;
-    break-inside: auto;
+}
+
+div.highlight pre {
     white-space: pre-wrap;
-    word-wrap: break-word;
-    margin-bottom: 0.6em;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+div.highlight code {
+    white-space: inherit;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    overflow: visible;
 }
 
 div[stmt] {
@@ -267,6 +284,27 @@ span[key], strong[key] {
     color: var(--color_current);
     padding: 0.1em 0.2em 0 0.2em;
     background-color: var(--color_key);
+}
+
+/* Responsive media */
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
+img {
+    height: auto;
+}
+
+/* Tables */
+table {
+    max-width: 100%;
+}
+
+/* Long URLs and other links */
+a {
+    overflow-wrap: anywhere;
 }
 
 /** Links */
@@ -428,3 +466,30 @@ table td { border: 1px solid #e8e8e8; }
 .highlight .vg { color: #008080; }
 .highlight .vi { color: #008080; }
 .highlight .il { color: #099; }
+
+/* ========================================
+ *  Responsive Overflow Protection
+ *  ======================================== */
+
+/* Content containers must be allowed to shrink */
+main,
+article,
+.wrapper,
+.page-content,
+.post-content,
+.footer-col-wrapper,
+.footer-col {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Long unbreakable text */
+p,
+li,
+blockquote,
+td,
+th,
+a,
+code:not(pre code) {
+    overflow-wrap: anywhere;
+}
