@@ -132,36 +132,60 @@ jobs:
 
             console.log("=== Artifacts ===");
 
-            const artifacts = await github.paginate(
-              github.rest.actions.listArtifactsForRepo,
-              {
-                owner,
-                repo,
-                per_page: 100
-              },
-              response => response.data.artifacts
-            );
+            const artifacts = [];
+
+            for (let page = 1; page <= 100; page++) {
+              const response =
+                await github.rest.actions.listArtifactsForRepo({
+                  owner,
+                  repo,
+                  per_page: 100,
+                  page
+                });
+
+              const batch = response.data.artifacts ?? [];
+
+              artifacts.push(
+                ...batch.filter(item =>
+                  item && typeof item.id === "number"
+                )
+              );
+
+              if (batch.length < 100) break;
+            }
+
+            console.log(`Fetched ${artifacts.length} artifacts`);
 
             const runMap = new Map(
-              runs.map(run => [run.id, run])
+              runs
+                .filter(run => run && run.id)
+                .map(run => [run.id, run])
             );
 
             for (const artifact of artifacts) {
+
               const runId = artifact.workflow_run?.id;
 
+              // Preserve artifacts belonging to latest Pages run
               if (runId === keeperRun.id) {
                 skipped++;
+                console.log(
+                  `KEEP artifact ${artifact.id}: latest Pages run`
+                );
                 continue;
               }
 
+              // Unknown or active workflows are protected
               const associatedRun = runMap.get(runId);
 
-              // Unknown or active runs are protected
               if (
                 !associatedRun ||
                 associatedRun.status !== "completed"
               ) {
                 skipped++;
+                console.log(
+                  `SKIP artifact ${artifact.id}: unknown or active run`
+                );
                 continue;
               }
 
@@ -174,6 +198,7 @@ jobs:
                 })
               );
             }
+
 
             // =========================================
             // 3. WORKFLOW RUNS
