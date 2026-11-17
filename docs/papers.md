@@ -1,5 +1,10 @@
 # Papers
 
+### analysis
+
+- [**Python SALT** (2026) [Oh et al.]](./papers/python-salt.md)
+  > 用 LLM 做类型分析时，不要问 LLM 所有问题；让静态分析决定，闭环控制
+
 ### sym
 
 - [**RETE** (2003) [Charles L. Forgy]](./papers/rete.md)
@@ -13,6 +18,8 @@
   > 用一个 invoke 原语实现对 LLM 外部系统的极简等效替代
 - [**AI as a (PTX) Compiler** (2026) [Costa *et al.*]](./papers/ai-ptx-compiler.md)
   > 借助传统验证器，采样 LLM output，验证、跑分并送入 feedback loop
+- [**Towards Safe LLM Agents** (2026) [Dantas *et al.*]](./papers/safe-llm-2026.md)
+  > 2026-08 关于 LLM 安全的综述
 
 ## Archived
 
