@@ -196,6 +196,25 @@ div.highlight {
     margin-bottom: 0.6em;
 }
 
+div[stmt] {
+    position: relative;
+    margin: 0.6em 1em;
+    padding: 1.1em 1em;
+    & > :last-child { margin-bottom: 0; }
+}
+div[stmt]::before,
+div[stmt]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-top: 1px solid color-mix(in srgb, var(--htmlFG) 90%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--htmlFG) 90%, transparent);
+}
+div[stmt]::before { top: 0.35em; }
+div[stmt]::after  { bottom: 0.35em; }
+
 blockquote {
     --color_current: grey;
     color: var(--color_current);
@@ -246,7 +265,6 @@ span[key], strong[key] {
     --color_current: var(--key_fg);
     color: var(--color_current);
     padding: 0.1em 0.2em 0 0.2em;
-    border-radius: 3px;
     background-color: var(--color_key);
 }
 
