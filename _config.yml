@@ -32,7 +32,7 @@ github_username:  q0ppa
   # - jekyll-feed
 markdown: kramdown
 kramdown:
-  input: GFM
+  input: Kramdown
   parse_block_html: true
   parse_span_html: true
   auto_ids: true
